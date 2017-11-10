@@ -52,8 +52,9 @@ CACHE_FNAME = "206_APIsAndDBs_cache.json"
 try:
     cache_file = open(CACHE_FNAME,'r')
     cache_contents = cache_file.read()
-    CACHE_DICTION = json.loads(cache_contents)
     cache_file.close()
+    CACHE_DICTION = json.loads(cache_contents)
+   	
 except:
     CACHE_DICTION = {}
 
@@ -70,16 +71,14 @@ def get_user_tweets(user):
 		CACHE_DICTION[user] = results
 		data = CACHE_DICTION[user]
 		cache_file = open(CACHE_FNAME, 'w')
-		cache_file.write(json.dumps(CACHE_DICTION[user]))
+		cache_file.write(json.dumps(CACHE_DICTION))
 		cache_file.close()
-	return data
-
-
-umich_tweets = get_user_tweets('@umich')
+	return CACHE_DICTION[user]
 
 # Write an invocation to the function for the "umich" user timeline and 
 # save the result in a variable called umich_tweets:
 
+umich_tweets = get_user_tweets('@umich')
 
 
 
@@ -90,11 +89,15 @@ umich_tweets = get_user_tweets('@umich')
 # NOTE: For example, if the user with the "TedXUM" screen name is 
 # mentioned in the umich timeline, that Twitter user's info should be 
 # in the Users table, etc.
-#conn = sqlite3.connect("206_APIsAndDBs.sqlite")
-#cur = conn.cursor()
+conn = sqlite3.connect("206_APIsAndDBs.sqlite")
+cur = conn.cursor()
 
-#cur.execute('DROP TABLE IF EXISTS Tweets')
-#cur.execute('CREATE TABLE Tweets (tweet_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, text TEXT, user_posted INTEGER, tweet_text TIMESTAMP, retweets INTEGER')
+cur.execute('DROP TABLE IF EXISTS Tweets')
+cur.execute('CREATE TABLE Tweets (tweet_id TEXT NOT NULL PRIMARY KEY, text TEXT, user_posted TEXT, time_posted DATETIME, retweets INTEGER')
+
+cur.execute('DROP TABLE IF EXISTS Users')
+cur.execute('CREATE TABLE Users (user_id TEXT NOT NULL PRIMARY KEY, screen_name TEXT, num_favs INTEGER, description TEXT')
+
 ## You should load into the Tweets table: 
 # Info about all the tweets (at least 20) that you gather from the 
 # umich timeline.
