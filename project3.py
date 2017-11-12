@@ -79,7 +79,7 @@ def get_user_tweets(user):
 # save the result in a variable called umich_tweets:
 
 umich_tweets = get_user_tweets('@umich')
-
+print(umich_tweets)
 
 
 ## Task 2 - Creating database and loading data into database
@@ -93,11 +93,23 @@ conn = sqlite3.connect("206_APIsAndDBs.sqlite")
 cur = conn.cursor()
 
 cur.execute('DROP TABLE IF EXISTS Tweets')
-cur.execute('CREATE TABLE Tweets (tweet_id TEXT NOT NULL PRIMARY KEY, text TEXT, user_posted TEXT, time_posted DATETIME, retweets INTEGER')
+cur.execute('CREATE TABLE Tweets (tweet_id TEXT PRIMARY KEY UNIQUE, text TEXT, user_posted TEXT, time_posted DATETIME, retweets INTEGER)')
+#cur.execute('CREATE TABLE Tweets (tweet_id TEXT PRIMARY KEY NOT NULL UNIQUE, text TEXT, user_posted TEXT, FOREIGN KEY(user_posted) REFERENCES user_posted(user_id), time_posted DATE, retweets INTEGER)')
 
 cur.execute('DROP TABLE IF EXISTS Users')
-cur.execute('CREATE TABLE Users (user_id TEXT NOT NULL PRIMARY KEY, screen_name TEXT, num_favs INTEGER, description TEXT')
+cur.execute('CREATE TABLE Users (user_id TEXT PRIMARY KEY UNIQUE, screen_name TEXT, num_favs INTEGER, description TEXT)')
+#cur.execute('CREATE TABLE Users (user_id TEXT PRIMARY KEY NOT NULL UNIQUE, screen_name TEXT, num_favs INTEGER, description TEXT)')
 
+
+for x in umich_tweets:
+	tup = x["id"], x["text"], x["id_str"], x["created_at"], x["retweet_count"]
+	cur.execute('INSERT INTO Tweets (tweet_id, text, user_posted, time_posted, retweets) VALUES(?,?,?,?,?)',tup)
+
+for i in umich_tweets:
+	tup = i["id_str"], i["screen_name"], i["favourites_count"], i["description"]
+	cur.execute('INSERT INTO Users (user_id, screen_name, num_favs, description) VALUES(?,?,?,?)', tup)
+
+conn.commit()
 ## You should load into the Tweets table: 
 # Info about all the tweets (at least 20) that you gather from the 
 # umich timeline.
