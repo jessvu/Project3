@@ -18,7 +18,7 @@ import twitter_info # same deal as always...
 import json
 import sqlite3
 
-## Your name:
+## Your name: Jessica Vu
 ## The names of anyone you worked with on this project:
 
 #####
@@ -80,7 +80,6 @@ def get_user_tweets(user):
 # save the result in a variable called umich_tweets:
 
 umich_tweets = get_user_tweets('@umich')
-#print(umich_tweets)
 
 
 ## Task 2 - Creating database and loading data into database
